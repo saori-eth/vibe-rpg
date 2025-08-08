@@ -1,0 +1,13 @@
+{
+  "name": "threejs-vibe-coding-starter-kit",
+  "version": "0.0.1",
+  "description": "hyperfy vibe coding starter kit",
+  "main": "index.js",
+  "scripts": {
+    "hyperfy:server": "npx @drama.haus/app-server"
+  },
+  "author": "peezy",
+  "devDependencies": {
+    "@drama.haus/app-server": "^0.0.1"
+  }
+}
