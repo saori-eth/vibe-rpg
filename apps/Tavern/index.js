@@ -21,6 +21,7 @@ const COLOR_WOOD_LIGHT = "#8b6a3a";
 const COLOR_STONE = "#5c5c5c";
 const COLOR_PLASTER = "#b7a888";
 const COLOR_BRONZE = "#8a6a2b";
+const COLOR_TERRACOTTA = "#b24a33";
 
 const HALF_WIDTH = ROOM_WIDTH / 2;
 const HALF_DEPTH = ROOM_DEPTH / 2;
@@ -190,6 +191,170 @@ for (let i = -2; i <= 2; i++) {
   });
   scene.add(post);
 }
+
+// Front canopy with terracotta tiles
+function addFrontCanopyRoof() {
+  const canopy = app.create("group");
+  scene.add(canopy);
+
+  const canopyWidth = ROOM_WIDTH + 1.0 * SCALE; // slight side overhang
+  const canopyDepth = 1.8 * SCALE; // how far it extends outward
+  const slopeAngle = Math.PI / 8; // ~22.5 degrees
+
+  // Anchor just below top of the front wall, slightly in front of it
+  const yAnchor = wallY - 0.15 * SCALE;
+  const zAnchor = frontZ - 0.06 * SCALE;
+
+  // Group to guarantee pitch (slope) applies to all children
+  const slopeGroup = app.create("group");
+  slopeGroup.position.set(0, yAnchor, frontZ - 0.06 * SCALE);
+  // Rotate whole canopy 180° and adjust pitch so tiles face outward
+  slopeGroup.rotation.set(-slopeAngle, Math.PI, 0);
+  canopy.add(slopeGroup);
+
+  // Terracotta barrel tiles running along the slope direction
+  const tileRadius = 0.07 * SCALE;
+  const tileLength = canopyDepth; // along local Y after rotation
+  const xSpacing = tileRadius * 1.9; // slight overlap
+  const numTiles = Math.ceil(canopyWidth / xSpacing) + 2;
+  const startX = -((numTiles - 1) * xSpacing) / 2;
+
+  for (let i = 0; i < numTiles; i++) {
+    const x = startX + i * xSpacing;
+    const tile = app.create("prim", {
+      type: "cylinder",
+      scale: [tileRadius, tileLength, tileRadius],
+      position: [x, -tileLength / 2, 0], // center so near end meets wall
+      color: COLOR_TERRACOTTA,
+      roughness: 0.6,
+      metalness: 0.05,
+      physics: "static",
+    });
+    slopeGroup.add(tile);
+  }
+
+  // Eave cap as a horizontal beam across width (box to avoid vertical cylinder look)
+  const eaveCap = app.create("prim", {
+    type: "box",
+    scale: [canopyWidth + 0.2 * SCALE, 0.18 * SCALE, 0.18 * SCALE],
+    position: [0, -tileLength, 0],
+    color: COLOR_WOOD_DARK,
+    roughness: 0.55,
+    metalness: 0.05,
+    physics: "static",
+  });
+  slopeGroup.add(eaveCap);
+
+  // Back batten to trim where the canopy meets the wall (sloped)
+  const backBatten = app.create("prim", {
+    type: "box",
+    scale: [canopyWidth, 0.06 * SCALE, 0.12 * SCALE],
+    position: [0, -0.03 * SCALE, 0],
+    color: COLOR_WOOD_DARK,
+    roughness: 0.9,
+    physics: "static",
+  });
+  slopeGroup.add(backBatten);
+
+  // Wooden support brackets (skip doorway center)
+  const bracketXs = [
+    -HALF_WIDTH + 1.0 * SCALE,
+    -DOOR_WIDTH / 2 - 0.8 * SCALE,
+    DOOR_WIDTH / 2 + 0.8 * SCALE,
+    HALF_WIDTH - 1.0 * SCALE,
+  ];
+  for (const bx of bracketXs) {
+    // Vertical post near wall (world-aligned)
+    const post = app.create("prim", {
+      type: "box",
+      scale: [0.12 * SCALE, 0.6 * SCALE, 0.12 * SCALE],
+      position: [bx, yAnchor - 0.35 * SCALE, frontZ - 0.06 * SCALE],
+      color: COLOR_WOOD_MED,
+      roughness: 0.95,
+      physics: "static",
+    });
+    canopy.add(post);
+
+    // Parent group so pitch is guaranteed to apply to brace
+    const braceGroup = app.create("group");
+    braceGroup.position.set(bx, yAnchor - 0.05 * SCALE, zAnchor);
+    braceGroup.rotation.set(-slopeAngle, Math.PI, 0);
+    canopy.add(braceGroup);
+
+    const braceLen = canopyDepth * 0.9;
+    const brace = app.create("prim", {
+      type: "box",
+      scale: [0.1 * SCALE, braceLen, 0.1 * SCALE], // length along local Y
+      position: [0, -braceLen / 2, 0],
+      color: COLOR_WOOD_DARK,
+      roughness: 0.95,
+      physics: "static",
+    });
+    braceGroup.add(brace);
+  }
+}
+
+addFrontCanopyRoof();
+
+// Wall lanterns flanking the doorway
+function addFrontLanterns() {
+  const lanternY = 1.9 * SCALE;
+  const offsetX = DOOR_WIDTH / 2 + 0.45 * SCALE;
+
+  function lanternAt(x) {
+    // Backplate
+    const plate = app.create("prim", {
+      type: "box",
+      scale: [0.12 * SCALE, 0.25 * SCALE, 0.06 * SCALE],
+      position: [x, lanternY, frontZ + 0.03 * SCALE],
+      color: COLOR_WOOD_DARK,
+      roughness: 0.9,
+      physics: "static",
+    });
+    scene.add(plate);
+
+    // Bracket arm
+    const arm = app.create("prim", {
+      type: "box",
+      scale: [0.06 * SCALE, 0.06 * SCALE, 0.25 * SCALE],
+      position: [x, lanternY - 0.02 * SCALE, frontZ - 0.15 * SCALE],
+      color: COLOR_WOOD_MED,
+      roughness: 0.95,
+      physics: "static",
+    });
+    scene.add(arm);
+
+    // Lantern body
+    const cage = app.create("prim", {
+      type: "cylinder",
+      scale: [0.08 * SCALE, 0.18 * SCALE, 0.08 * SCALE],
+      position: [x, lanternY - 0.02 * SCALE, frontZ - 0.28 * SCALE],
+      rotation: [Math.PI / 2, 0, 0],
+      color: COLOR_BRONZE,
+      roughness: 0.7,
+      metalness: 0.3,
+    });
+    scene.add(cage);
+
+    // Glow orb
+    const glow = app.create("prim", {
+      type: "sphere",
+      scale: [0.07 * SCALE, 0.07 * SCALE, 0.07 * SCALE],
+      position: [x, lanternY - 0.02 * SCALE, frontZ - 0.28 * SCALE],
+      color: "#ffdd99",
+      emissive: "#ffbb66",
+      emissiveIntensity: 1.3,
+      transparent: true,
+      opacity: 0.85,
+    });
+    scene.add(glow);
+  }
+
+  lanternAt(-offsetX);
+  lanternAt(offsetX);
+}
+
+addFrontLanterns();
 
 // Bar counter (static)
 const barCounter = app.create("prim", {
