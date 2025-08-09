@@ -85,21 +85,21 @@ function createFenceSection(startX, startZ, endX, endZ) {
   const railY2 = FENCE_HEIGHT * 0.7;
   
   for (let railY of [railY1, railY2]) {
+    // Parent group so yaw is guaranteed to apply
+    const railGroup = app.create("group")
+    railGroup.position.set((startX + endX) / 2, railY, (startZ + endZ) / 2)
+    railGroup.rotation.set(0, angle, 0)
+    scene.add(railGroup)
+
     const rail = app.create("prim", {
       type: "box",
       scale: [length, POST_SIZE * 0.6, POST_SIZE * 0.4],
-      position: [
-        (startX + endX) / 2,
-        railY,
-        (startZ + endZ) / 2
-      ],
+      position: [0, 0, 0],
       color: COLOR_FENCE_WOOD,
       roughness: 0.9,
       physics: "static",
-    });
-    scene.add(rail);
-    // Apply yaw after adding so activation doesn't recompose before this change
-    rail.rotation.set(0, angle, 0)
+    })
+    railGroup.add(rail)
   }
 }
 
