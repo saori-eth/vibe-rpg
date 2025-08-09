@@ -3,6 +3,7 @@
 const box = app.get("Block")
 box.visible = false
 
+
 // World of Warcraft-style Tavern built with primitives
 
 // Dimensions and common materials
@@ -146,20 +147,21 @@ function buildFrontSideWithWindow(isRight) {
   scene.add(sideLeft);
   scene.add(sideRight);
 
-  // glass pane (thin) centered in opening
-  const glass = app.create("prim", {
-    type: "box",
-    scale: [WINDOW_WIDTH, WINDOW_HEIGHT, Math.max(0.02, WALL_THICKNESS * 0.1)],
-    position: [sideCenterX, WINDOW_CENTER_Y, frontZ],
-    color: "#88aaff",
-    emissive: null,
-    metalness: 0,
-    roughness: 0.1,
-    transparent: true,
-    opacity: 0.35,
-    physics: "static",
-  });
-  scene.add(glass);
+//   // glass pane (thin) centered in opening
+//   const glass = app.create("prim", {
+//     type: "box",
+//     scale: [WINDOW_WIDTH, WINDOW_HEIGHT, Math.max(0.02, WALL_THICKNESS * 0.1)],
+//     position: [sideCenterX, WINDOW_CENTER_Y, frontZ],
+//     color: "#88aaff",
+//     emissive: null,
+//     metalness: 0,
+//     roughness: 0.1,
+//     transparent: true,
+//     opacity: 0.35,
+//     physics: "static",
+//   });
+//   scene.add(glass);
+// }
 }
 
 buildFrontSideWithWindow(false);
@@ -192,7 +194,7 @@ for (let i = -2; i <= 2; i++) {
 // Bar counter (static)
 const barCounter = app.create("prim", {
   type: "box",
-  scale: [0.6 * SCALE, 1.1 * SCALE, ROOM_DEPTH - 2 * SCALE],
+  scale: [0.6 * SCALE, 0.8 * SCALE, ROOM_DEPTH - 2 * SCALE],
   position: [HALF_WIDTH - 1.2 * SCALE, 0.55 * SCALE, 0],
   color: COLOR_WOOD_MED,
   roughness: 0.8,
@@ -356,4 +358,3 @@ app.on("update", (dt) => {
   fire.emissiveIntensity = 1.5 + Math.max(0, flicker);
   chandelier.emissiveIntensity = 0.9 + Math.sin(t * 1.2) * 0.3;
 });
-
