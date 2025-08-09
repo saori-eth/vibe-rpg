@@ -1,0 +1,12 @@
+{
+  "http://localhost:3000": {
+    "blueprints": [
+      {
+        "desc": "",
+        "id": "XGfGyihm0X",
+        "version": 41
+      }
+    ],
+    "assetsUrl": "http://localhost:3000/assets"
+  }
+}
