@@ -2,8 +2,16 @@
   "http://localhost:3000": {
     "blueprints": [
       {
+        "props": {
+          "collision": true,
+          "emote": {
+            "type": "emote",
+            "name": "Sitting And Talking To Another Person.glb",
+            "url": "asset://ad0dc6273210096fa432edaddea494beaa855cc3f108f2e909c6d4242559a97a.glb"
+          }
+        },
         "id": "MHTZGSrrXG",
-        "version": 21
+        "version": 25
       }
     ],
     "assetsUrl": "http://localhost:3000/assets"
