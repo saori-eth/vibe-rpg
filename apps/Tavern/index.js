@@ -1,5 +1,6 @@
 /// <reference path="../../index.d.ts" />
 
+// Remove the default block completely to avoid invisible collisions
 const box = app.get("Block")
 box.visible = false
 
@@ -295,7 +296,7 @@ function addFrontCanopyRoof() {
 }
 
 addFrontCanopyRoof();
-
+  
 // Wall lanterns flanking the doorway
 function addFrontLanterns() {
   const lanternY = 1.9 * SCALE;
@@ -354,7 +355,7 @@ function addFrontLanterns() {
   lanternAt(offsetX);
 }
 
-addFrontLanterns();
+  addFrontLanterns();
 
 // Bar counter (static)
 const barCounter = app.create("prim", {
@@ -378,101 +379,8 @@ const barBack = app.create("prim", {
 });
 scene.add(barBack);
 
-// Simple barrel props near the bar
-for (let i = -2; i <= 2; i += 2) {
-  const barrel = app.create("prim", {
-    type: "cylinder",
-    scale: [0.45 * SCALE, 0.9 * SCALE, 0.45 * SCALE],
-    position: [HALF_WIDTH - 2.2 * SCALE, 0.45 * SCALE, i * SCALE],
-    color: COLOR_WOOD_DARK,
-    roughness: 0.9,
-    metalness: 0,
-    physics: "static",
-  });
-  scene.add(barrel);
-}
 
-// Helper to create a table with four chairs
-function createTableWithChairs(x, z, rotationY = 0) {
-  const group = app.create("group");
-  scene.add(group);
-
-  // Table leg
-  const leg = app.create("prim", {
-    type: "cylinder",
-    scale: [0.1 * SCALE, 0.9 * SCALE, 0.1 * SCALE],
-    position: [0, 0.45 * SCALE, 0],
-    color: COLOR_WOOD_MED,
-    roughness: 0.9,
-    physics: "static",
-  });
-  group.add(leg);
-
-  // Table top
-  const top = app.create("prim", {
-    type: "cylinder",
-    scale: [0.8 * SCALE, 0.06 * SCALE, 0.8 * SCALE],
-    position: [0, 0.96 * SCALE, 0],
-    color: COLOR_WOOD_LIGHT,
-    roughness: 0.85,
-    physics: "static",
-  });
-  group.add(top);
-
-  // Chair factory
-  function chair(px, pz, ry) {
-    const c = app.create("group");
-    group.add(c);
-    const seatY = 0.45 * SCALE;
-    const seat = app.create("prim", {
-      type: "box",
-      scale: [0.45 * SCALE, 0.05 * SCALE, 0.45 * SCALE],
-      position: [0, seatY, 0],
-      color: COLOR_WOOD_LIGHT,
-      roughness: 0.9,
-      physics: "static",
-    });
-    const back = app.create("prim", {
-      type: "box",
-      scale: [0.45 * SCALE, 0.5 * SCALE, 0.05 * SCALE],
-      position: [0, seatY + 0.27 * SCALE, -0.22 * SCALE],
-      color: COLOR_WOOD_LIGHT,
-      roughness: 0.9,
-      physics: "static",
-    });
-    // legs
-    const legScale = [0.05 * SCALE, seatY, 0.05 * SCALE];
-    const legYOffset = seatY / 2;
-    const l1 = app.create("prim", { type: "box", scale: legScale, position: [0.2 * SCALE, legYOffset, 0.2 * SCALE], color: COLOR_WOOD_MED, physics: "static" });
-    const l2 = app.create("prim", { type: "box", scale: legScale, position: [-0.2 * SCALE, legYOffset, 0.2 * SCALE], color: COLOR_WOOD_MED, physics: "static" });
-    const l3 = app.create("prim", { type: "box", scale: legScale, position: [0.2 * SCALE, legYOffset, -0.2 * SCALE], color: COLOR_WOOD_MED, physics: "static" });
-    const l4 = app.create("prim", { type: "box", scale: legScale, position: [-0.2 * SCALE, legYOffset, -0.2 * SCALE], color: COLOR_WOOD_MED, physics: "static" });
-    c.add(seat); c.add(back); c.add(l1); c.add(l2); c.add(l3); c.add(l4);
-    c.position.set(px, 0, pz);
-    c.rotation.set(0, ry, 0);
-    return c;
-  }
-
-  // Arrange four chairs around
-  chair(0, -1.1 * SCALE, 0);
-  chair(0, 1.1 * SCALE, Math.PI);
-  chair(-1.1 * SCALE, 0, Math.PI / 2);
-  chair(1.1 * SCALE, 0, -Math.PI / 2);
-
-  group.position.set(x, 0, z);
-  group.rotation.set(0, rotationY, 0);
-  return group;
-}
-
-// Place tables
-createTableWithChairs(-3 * SCALE, -1.5 * SCALE);
-// Removed the table directly in front of the door to clear entry
-// createTableWithChairs(0, -1.5 * SCALE, Math.PI / 8);
-createTableWithChairs(3 * SCALE, -1.5 * SCALE, -Math.PI / 6);
-createTableWithChairs(-2 * SCALE, 2.0 * SCALE, Math.PI / 4);
-createTableWithChairs(2.5 * SCALE, 2.2 * SCALE, -Math.PI / 8);
-
-// Fireplace (static) with emissive fire flicker
+// Enhanced Fireplace with particles and primitives
 const hearthBase = app.create("prim", {
   type: "box",
   scale: [2.2 * SCALE, 0.3 * SCALE, 1.0 * SCALE],
@@ -489,37 +397,89 @@ const chimney = app.create("prim", {
   roughness: 1,
   physics: "static",
 });
-const fire = app.create("prim", {
-  type: "sphere",
-  scale: [0.5 * SCALE, 0.5 * SCALE, 0.5 * SCALE],
-  position: [0, 0.5 * SCALE, HALF_DEPTH - 0.7 * SCALE],
-  color: "#ff7a00",
-  emissive: "#ff6a00",
-  emissiveIntensity: 2.0,
-  transparent: true,
-  opacity: 0.8,
+
+// Fire particles
+const fireParticles = app.create("particles", {
+  position: [0, 0.4 * SCALE, HALF_DEPTH - 0.7 * SCALE],
+  shape: ["cone", 0.15 * SCALE, 0.8, 15],
+  direction: 0.3,
+  rate: 40,
+  duration: 3,
+  loop: true,
+  max: 200,
+  life: "0.5~1.2",
+  speed: "0.8~1.5",
+  size: "0.08~0.15",
+  color: "#ff4400~#ffaa00",
+  alpha: "0.8~1",
+  emissive: "1~2",
+  blending: "additive",
+  space: "world",
+  force: new Vector3(0, 2.5, 0),
+  sizeOverLife: "0,0.5|0.3,1|0.7,0.8|1,0.2",
+  alphaOverLife: "0,0|0.1,0.9|0.8,0.7|1,0",
+  colorOverLife: "0,#ffffff|0.2,#ffff00|0.5,#ff6600|0.8,#ff0000|1,#330000",
 });
+
+// Smoke particles
+const smokeParticles = app.create("particles", {
+  position: [0, 0.8 * SCALE, HALF_DEPTH - 0.7 * SCALE],
+  shape: ["cone", 0.1 * SCALE, 0.9, 10],
+  direction: 0.5,
+  rate: 8,
+  duration: 5,
+  loop: true,
+  max: 50,
+  life: "2~4",
+  speed: "0.3~0.6",
+  size: "0.15~0.3",
+  color: "#222222~#444444",
+  alpha: "0.3~0.5",
+  blending: "normal",
+  space: "world",
+  force: new Vector3(0, 1.2, 0),
+  velocityRadial: 0.1,
+  sizeOverLife: "0,0.3|0.3,1|1,2",
+  alphaOverLife: "0,0|0.1,0.4|0.7,0.2|1,0",
+});
+
+// Logs in the fireplace
+const log1 = app.create("prim", {
+  type: "cylinder",
+  scale: [0.08 * SCALE, 0.6 * SCALE, 0.08 * SCALE],
+  position: [-0.15 * SCALE, 0.25 * SCALE, HALF_DEPTH - 0.65 * SCALE],
+  rotation: [0, 0, Math.PI / 2.5],
+  color: "#3d2817",
+  roughness: 0.9,
+  physics: "static",
+});
+
+const log2 = app.create("prim", {
+  type: "cylinder",
+  scale: [0.07 * SCALE, 0.5 * SCALE, 0.07 * SCALE],
+  position: [0.12 * SCALE, 0.25 * SCALE, HALF_DEPTH - 0.68 * SCALE],
+  rotation: [0, 0, -Math.PI / 3],
+  color: "#2e1f11",
+  roughness: 0.95,
+  physics: "static",
+});
+
+const log3 = app.create("prim", {
+  type: "cylinder",
+  scale: [0.06 * SCALE, 0.45 * SCALE, 0.06 * SCALE],
+  position: [0, 0.22 * SCALE, HALF_DEPTH - 0.75 * SCALE],
+  rotation: [Math.PI / 12, 0, Math.PI / 2],
+  color: "#4a3426",
+  roughness: 0.9,
+  physics: "static",
+});
+
+
 scene.add(hearthBase);
 scene.add(chimney);
-scene.add(fire);
+scene.add(log1);
+scene.add(log2);
+scene.add(log3);
+scene.add(fireParticles);
+scene.add(smokeParticles);
 
-// Simple chandelier (emissive orb) to mimic warm lighting
-const chandelier = app.create("prim", {
-  type: "sphere",
-  scale: [0.25 * SCALE, 0.25 * SCALE, 0.25 * SCALE],
-  position: [0, ROOM_HEIGHT - 0.6 * SCALE, 0],
-  color: COLOR_BRONZE,
-  emissive: "#ffbb66",
-  emissiveIntensity: 1.2,
-});
-scene.add(chandelier);
-
-// (Door trigger removed to ensure no invisible blocking volume at the entrance)
-
-// Update loop: flicker fire and chandelier emissive intensity
-app.on("update", (dt) => {
-  const t = Date.now() * 0.002;
-  const flicker = 1.5 + Math.sin(t * 2.3) * 0.5 + Math.sin(t * 3.7) * 0.3;
-  fire.emissiveIntensity = 1.5 + Math.max(0, flicker);
-  chandelier.emissiveIntensity = 0.9 + Math.sin(t * 1.2) * 0.3;
-});
