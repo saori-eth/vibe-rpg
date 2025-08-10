@@ -2,8 +2,8 @@
   "http://localhost:3000": {
     "blueprints": [
       {
-        "id": "ULQGpuWwOC",
-        "version": 80
+        "id": "c1wTD7AgNv",
+        "version": 21
       }
     ],
     "assetsUrl": "http://localhost:3000/assets"

@@ -389,12 +389,95 @@ const hearthBase = app.create("prim", {
   roughness: 1,
   physics: "static",
 });
+
+// Main chimney structure
 const chimney = app.create("prim", {
   type: "box",
   scale: [1.8 * SCALE, 2.5 * SCALE, 0.5 * SCALE],
   position: [0, 1.4 * SCALE, HALF_DEPTH - 0.25 * SCALE],
   color: COLOR_STONE,
   roughness: 1,
+  physics: "static",
+});
+
+// Fireplace opening (darker interior)
+const fireplaceOpening = app.create("prim", {
+  type: "box",
+  scale: [1.2 * SCALE, 1.0 * SCALE, 0.4 * SCALE],
+  position: [0, 0.65 * SCALE, HALF_DEPTH - 0.5 * SCALE],
+  color: "#1a1a1a",
+  roughness: 1,
+  physics: "static",
+});
+
+// Mantel shelf
+const mantel = app.create("prim", {
+  type: "box",
+  scale: [2.0 * SCALE, 0.12 * SCALE, 0.8 * SCALE],
+  position: [0, 1.25 * SCALE, HALF_DEPTH - 0.4 * SCALE],
+  color: COLOR_WOOD_DARK,
+  roughness: 0.85,
+  physics: "static",
+});
+
+// Side stones (left)
+const sideStoneLeft = app.create("prim", {
+  type: "box",
+  scale: [0.3 * SCALE, 1.2 * SCALE, 0.25 * SCALE],
+  position: [-0.75 * SCALE, 0.7 * SCALE, HALF_DEPTH - 0.55 * SCALE],
+  color: COLOR_STONE,
+  roughness: 1,
+  physics: "static",
+});
+
+// Side stones (right)
+const sideStoneRight = app.create("prim", {
+  type: "box",
+  scale: [0.3 * SCALE, 1.2 * SCALE, 0.25 * SCALE],
+  position: [0.75 * SCALE, 0.7 * SCALE, HALF_DEPTH - 0.55 * SCALE],
+  color: COLOR_STONE,
+  roughness: 1,
+  physics: "static",
+});
+
+// Ash bed
+const ashBed = app.create("prim", {
+  type: "box",
+  scale: [1.0 * SCALE, 0.05 * SCALE, 0.6 * SCALE],
+  position: [0, 0.32 * SCALE, HALF_DEPTH - 0.7 * SCALE],
+  color: "#2a2a2a",
+  roughness: 1,
+  physics: "static",
+});
+
+// Fire grate
+const grate1 = app.create("prim", {
+  type: "box",
+  scale: [0.8 * SCALE, 0.02 * SCALE, 0.02 * SCALE],
+  position: [0, 0.35 * SCALE, HALF_DEPTH - 0.6 * SCALE],
+  color: "#1a1a1a",
+  metalness: 0.8,
+  roughness: 0.3,
+  physics: "static",
+});
+
+const grate2 = app.create("prim", {
+  type: "box",
+  scale: [0.8 * SCALE, 0.02 * SCALE, 0.02 * SCALE],
+  position: [0, 0.35 * SCALE, HALF_DEPTH - 0.7 * SCALE],
+  color: "#1a1a1a",
+  metalness: 0.8,
+  roughness: 0.3,
+  physics: "static",
+});
+
+const grate3 = app.create("prim", {
+  type: "box",
+  scale: [0.8 * SCALE, 0.02 * SCALE, 0.02 * SCALE],
+  position: [0, 0.35 * SCALE, HALF_DEPTH - 0.8 * SCALE],
+  color: "#1a1a1a",
+  metalness: 0.8,
+  roughness: 0.3,
   physics: "static",
 });
 
@@ -477,6 +560,14 @@ const log3 = app.create("prim", {
 
 scene.add(hearthBase);
 scene.add(chimney);
+scene.add(fireplaceOpening);
+scene.add(mantel);
+scene.add(sideStoneLeft);
+scene.add(sideStoneRight);
+scene.add(ashBed);
+scene.add(grate1);
+scene.add(grate2);
+scene.add(grate3);
 scene.add(log1);
 scene.add(log2);
 scene.add(log3);
