@@ -4,10 +4,11 @@
   "description": "hyperfy vibe coding starter kit",
   "main": "index.js",
   "scripts": {
-    "hyperfy:server": "npx @drama.haus/app-server"
+    "hyperfy:server": "npx @drama.haus/app-server",
+    "dev": "npx @drama.haus/app-server"
   },
   "author": "peezy",
   "devDependencies": {
-    "@drama.haus/app-server": "^0.0.1"
+    "@drama.haus/app-server": "^0.0.3"
   }
 }
